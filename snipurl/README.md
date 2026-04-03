@@ -5,18 +5,22 @@ A production-grade URL shortener built with FastAPI, PostgreSQL, and Redis. Feat
 ---
 
 ## Features
-
-- **Shorten URLs** with auto-generated or custom aliases
-- **Link expiration** — set a TTL on any short link
-- **Click analytics** — per-click records with IP, user agent, referer, and country
-- **JWT authentication** — register, login, and manage your own links
-- **Redis caching** — sub-millisecond redirect resolution on cache hits
-- **Rate limiting** — per-IP limits on create (20/min), redirect (200/min), and global (60/min)
-- **Alembic migrations** — schema versioned and reproducible
-- **Docker Compose** — one command to run the full stack
-- **Zero-comment codebase** — clean, readable production Python
+- 🚀 Instant URL shortening with custom aliases
+- 📊 Real-time click analytics (IP, device, country)
+- ⚡ Redis-powered ultra-fast redirects
+- 🔐 Secure JWT authentication
+- ⏳ Link expiration support
+- 🛡️ Built-in rate limiting for abuse prevention
+- **Clean, self-documenting code with minimal necessary comments
 
 ---
+## Frontend
+
+A clean React-based UI for:
+
+- Creating short URLs
+- Custom aliases & expiration
+- Viewing link details and stats
 
 ## Architecture
 
@@ -278,7 +282,7 @@ clicks
 
 ---
 
-## Bonus Features (Roadmap)
+## Bonus Features (in future)
 
 - **QR codes** — generate a QR code PNG for any short URL via `/urls/{code}/qr` using `qrcode` library
 - **Link preview** — return Open Graph metadata for the destination URL
@@ -289,9 +293,3 @@ clicks
 
 ---
 
-## Resume Bullets
-
-- Engineered a production FastAPI URL shortener with JWT auth, Redis caching, and per-route rate limiting, handling redirect resolution in under 2ms on cache hits
-- Designed a three-table PostgreSQL schema (Users, URLs, Clicks) with composite indexes optimised for high-throughput redirect lookups and time-series analytics queries
-- Implemented async Redis caching with graceful degradation to Postgres on cache miss, and background-task click recording to keep p99 redirect latency independent of write load
-- Containerised the full stack with a two-stage Docker build and Docker Compose with health-checked service dependencies, enabling one-command local and production deployment
