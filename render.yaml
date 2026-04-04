@@ -4,7 +4,7 @@ services:
     name: snipurl-api
     runtime: docker
     plan: free
-    dockerfilePath: ./Dockerfile.render
+    dockerfilePath: ./Dockerfile.lightweight
     dockerContext: .
     envVars:
       - key: DATABASE_URL
@@ -22,6 +22,9 @@ services:
         value: https://snipurl-api.onrender.com
       - key: CORS_ORIGINS
         value: '["https://snipurl-frontend.onrender.com"]'
+      - key: WEB_CONCURRENCY
+        value: 1
+    healthCheckPath: /health
 
   # PostgreSQL Database
   - type: pserv

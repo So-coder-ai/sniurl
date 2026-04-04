@@ -141,6 +141,35 @@ CORS_ORIGINS=["https://your-frontend-name.onrender.com"]
    PIP_VERSION=latest
    ```
 
+### Issue: Out of Memory (Free Tier)
+**Error:** `Out of memory (used over 512Mi)`
+
+**Causes:**
+- Render free tier has 512MB memory limit
+- Multi-stage Docker builds use more memory
+- Multiple worker processes consume too much memory
+
+**Solutions:**
+1. **Use Lightweight Dockerfile:**
+   - `Dockerfile.lightweight` is optimized for memory
+   - Single-stage build instead of multi-stage
+   - Minimal dependencies only
+
+2. **Use Minimal Requirements:**
+   - `requirements-minimal.txt` has essential packages only
+   - Removes testing and development dependencies
+   - Uses memory-efficient package versions
+
+3. **Optimize Startup:**
+   - Single worker process: `--workers 1`
+   - Set `WEB_CONCURRENCY=1` environment variable
+   - Use `start.sh` script for memory management
+
+4. **Alternative: Upgrade Plan:**
+   - Render Standard plan ($7/month) provides 1GB RAM
+   - Better for production applications
+   - More reliable performance
+
 ### Issue: Build Timeout
 **Solution:**
 1. Use Docker deployment (more reliable)
