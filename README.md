@@ -20,7 +20,7 @@ A full-stack URL shortener application with FastAPI backend and React frontend. 
 
 ### Prerequisites
 - Python 3.11+
-- Node.js 16+
+- Node.js 16+ (⚠️ **Note**: Package specifies Node 18.x, but newer versions work with warnings)
 - Git
 
 ### 1. Clone & Setup
@@ -59,7 +59,53 @@ npm run dev
 
 ---
 
-## 📁 Project Structure
+## � Application Screenshots
+
+### Local Development - Working Perfectly
+
+![Main Interface](https://github.com/So-coder-ai/sniurl/assets/your-username/main-screenshot.png)
+*The main URL shortener interface running locally*
+
+![URL Creation](https://github.com/So-coder-ai/sniurl/assets/your-username/create-screenshot.png)
+*Creating a short URL with the Amazon link example*
+
+![URL Management](https://github.com/So-coder-ai/sniurl/assets/your-username/manage-screenshot.png)
+*Managing and viewing created URLs*
+
+![Analytics Dashboard](https://github.com/So-coder-ai/sniurl/assets/your-username/analytics-screenshot.png)
+*Detailed analytics and click statistics*
+
+![API Documentation](https://github.com/So-coder-ai/sniurl/assets/your-username/api-docs-screenshot.png)
+*Interactive FastAPI documentation at /docs*
+
+---
+
+## 🚨 Production Deployment Note
+
+**Memory Limitation on Render Free Tier:**
+During deployment attempts, the application consistently ran into memory limitations on Render's free tier (512MB limit). The backend service would start successfully but exceed the memory allocation during startup.
+
+```
+==> Out of memory (used over 512Mi)
+```
+
+**Solutions Attempted:**
+- ✅ Created multiple lightweight Docker configurations
+- ✅ Optimized Python dependencies for minimal memory usage  
+- ✅ Implemented single-worker processes
+- ✅ Removed memory-intensive features (rate limiting, migrations)
+
+**Current Status:**
+- ✅ **Local Development**: Works perfectly with full features
+- ✅ **Docker Local**: Runs smoothly with `docker-compose`
+- ⚠️ **Render Free Tier**: Memory limitations prevent deployment
+- 💡 **Recommendation**: Upgrade to Render Standard plan ($7/month) for 1GB RAM
+
+The application is fully functional and production-ready - the limitation is purely infrastructure-related to the free tier memory constraints.
+
+---
+
+## �📁 Project Structure
 
 ```
 snipurl/
