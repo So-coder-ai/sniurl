@@ -116,6 +116,37 @@ CORS_ORIGINS=["https://your-frontend-name.onrender.com"]
 2. Check `DATABASE_URL` is correct
 3. Run migrations manually if needed
 
+### Issue: Rust Compilation Error (pydantic-core)
+**Error:** `error: failed to create directory '/usr/local/cargo/registry/cache'`
+
+**Causes:**
+- pydantic-core requires Rust to compile
+- Render's build environment has filesystem restrictions
+
+**Solutions:**
+1. **Use Docker Deployment (Recommended):**
+   - The `render.yaml` now uses Docker with `Dockerfile.render`
+   - Uses Python 3.11 and compatible package versions
+   - Avoids Rust compilation entirely
+
+2. **Use Compatible Package Versions:**
+   - `requirements-render.txt` has pre-compiled versions
+   - Uses older but stable package versions
+   - Avoids packages that need Rust compilation
+
+3. **Manual Deployment Steps:**
+   ```bash
+   # In Render dashboard, set these environment variables:
+   PYTHON_VERSION=3.11.7
+   PIP_VERSION=latest
+   ```
+
+### Issue: Build Timeout
+**Solution:**
+1. Use Docker deployment (more reliable)
+2. Reduce package count in requirements
+3. Use Render's build caching
+
 ## Production Considerations
 
 1. **Security:**
