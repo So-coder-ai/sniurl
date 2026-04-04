@@ -15,6 +15,8 @@ from app.core.redis import close_redis
 from app.models.url import User, URL, Click
 from app.core.database import Base
 from app.routers import auth_router, urls_router, redirect_router
+from fastapi import FastAPI
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,15 +24,23 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import subprocess
+
+    try:
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        logger.info("Migrations applied")
+    except Exception as e:
+        logger.error(f"Migration failed: {e}")
+
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables verified")
+
     yield
+
     await close_redis()
     logger.info("Shutdown complete")
-
 
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit_default])
 
