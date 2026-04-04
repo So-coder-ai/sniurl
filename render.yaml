@@ -4,7 +4,7 @@ services:
     name: snipurl-api
     runtime: docker
     plan: free
-    dockerfilePath: ./Dockerfile.lightweight
+    dockerfilePath: ./Dockerfile.memory-optimized
     dockerContext: .
     envVars:
       - key: DATABASE_URL
