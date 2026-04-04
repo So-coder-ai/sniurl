@@ -63,19 +63,19 @@ npm run dev
 
 ### Local Development - Working Perfectly
 
-![Main Interface](https://github.com/So-coder-ai/sniurl/assets/your-username/main-screenshot.png)
+![Main Interface](screenshots/main-screenshot.png)
 *The main URL shortener interface running locally*
 
-![URL Creation](https://github.com/So-coder-ai/sniurl/assets/your-username/create-screenshot.png)
+![URL Creation](screenshots/create-screenshot.png)
 *Creating a short URL with the Amazon link example*
 
-![URL Management](https://github.com/So-coder-ai/sniurl/assets/your-username/manage-screenshot.png)
+![URL Management](screenshots/manage-screenshot.png)
 *Managing and viewing created URLs*
 
-![Analytics Dashboard](https://github.com/So-coder-ai/sniurl/assets/your-username/analytics-screenshot.png)
+![Analytics Dashboard](screenshots/analytics-screenshot.png)
 *Detailed analytics and click statistics*
 
-![API Documentation](https://github.com/So-coder-ai/sniurl/assets/your-username/api-docs-screenshot.png)
+![API Documentation](screenshots/api-docs-screenshot.png)
 *Interactive FastAPI documentation at /docs*
 
 ---
