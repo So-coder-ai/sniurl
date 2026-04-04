@@ -1,53 +1,65 @@
-# SnipURL — Production URL Shortener API
+# SnipURL — Modern URL Shortener
 
-A production-grade URL shortener built with FastAPI, PostgreSQL, and Redis. Features JWT authentication, per-user link management, click analytics, Redis caching, and per-route rate limiting.
+A full-stack URL shortener application with FastAPI backend and React frontend. Features JWT authentication, analytics, Redis caching, and rate limiting.
+
+---
+
+## ✨ Features
+
+- **🚀 Fast URL Shortening**: Create short URLs with custom aliases
+- **📊 Analytics Dashboard**: Track clicks and visitor statistics  
+- **🔐 User Authentication**: JWT-based secure login system
+- **⚡ Performance**: Redis-powered ultra-fast redirects
+- **�️ Security**: Rate limiting and abuse prevention
+- **📱 Responsive UI**: Clean, modern React interface
+- **🔧 Easy Setup**: Simple local development with SQLite
 
 ---
 
-## Features
-- 🚀 Instant URL shortening with custom aliases
-- 📊 Real-time click analytics (IP, device, country)
-- ⚡ Redis-powered ultra-fast redirects
-- 🔐 Secure JWT authentication
-- ⏳ Link expiration support
-- 🛡️ Built-in rate limiting for abuse prevention
-- **Clean, self-documenting code with minimal necessary comments
+## 🚀 Quick Start
 
----
-## Frontend
+### Prerequisites
+- Python 3.11+
+- Node.js 16+
+- Git
 
-A clean React-based UI for:
-
-- Creating short URLs
-- Custom aliases & expiration
-- Viewing link details and stats
-
-## Architecture
-
-```
-┌─────────────┐     ┌────────────────────────────────────┐     ┌──────────┐
-│   Client    │────▶│           FastAPI App              │────▶│ Postgres │
-└─────────────┘     │                                    │     └──────────┘
-                    │  POST /auth/register  /auth/login  │
-                    │  POST /urls           (create)     │     ┌──────────┐
-                    │  GET  /{code}         (redirect)   │────▶│  Redis   │
-                    │  GET  /urls/me        (list)       │     └──────────┘
-                    │  GET  /urls/{code}/stats           │
-                    │  PATCH/DELETE /urls/{code}         │
-                    └────────────────────────────────────┘
+### 1. Clone & Setup
+```bash
+git clone https://github.com/So-coder-ai/sniurl.git
+cd snipurl
 ```
 
-**Redirect hot path:**
-1. Check Redis for `url:{code}` — return in ~1ms on hit
-2. On miss, query Postgres, write to Redis (TTL 1 hour), return
-3. `record_click()` runs as a FastAPI `BackgroundTask` — redirect happens immediately, analytics write is async
+### 2. Backend Setup
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-**Short code generation:**
-`secrets.choice` over base-62 alphabet (a–z, A–Z, 0–9), 7 characters = 62⁷ ≈ 3.5 trillion possible codes. Collision probability is negligible at scale; the service retries up to 10 times before failing.
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup environment
+cp .env.example .env
+
+# Run backend
+uvicorn app.main:app --reload --port 10000
+```
+
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 4. Access Application
+- 🌐 **Frontend**: http://localhost:3000
+- 🔧 **Backend API**: http://localhost:10000
+- 📚 **API Docs**: http://localhost:10000/docs
 
 ---
 
-## Folder Structure
+## 📁 Project Structure
 
 ```
 snipurl/

@@ -1,208 +1,183 @@
-# SnipURL Deployment Guide for Render
+# SnipURL - URL Shortener Application
 
 ## Overview
-This guide will help you deploy SnipURL on Render with separate backend API and frontend static site services.
+SnipURL is a modern URL shortener built with FastAPI (backend) and React (frontend). It features JWT authentication, analytics, Redis caching, and rate limiting.
 
-## Prerequisites
-- Render account (free tier is sufficient)
-- GitHub repository with your code
+## Local Development
 
-## Step 1: Prepare Your Repository
+### Prerequisites
+- Python 3.11+
+- Node.js 16+
+- PostgreSQL (optional, uses SQLite by default)
+- Redis (optional, for caching)
 
-1. **Commit all changes** to your GitHub repository
-2. **Ensure these files are present:**
-   - `render.yaml` (Render configuration)
-   - `.env.production` (Backend environment variables)
-   - `frontend/.env.production` (Frontend environment variables)
+### Quick Start
 
-## Step 2: Deploy on Render
+1. **Clone and Setup:**
+   ```bash
+   git clone https://github.com/So-coder-ai/sniurl.git
+   cd snipurl
+   ```
 
-### Option A: Using render.yaml (Recommended)
-1. Connect your GitHub repository to Render
-2. Render will automatically detect `render.yaml` and create all services
-3. Services will be created:
-   - `snipurl-api` (Backend)
-   - `snipurl-db` (PostgreSQL)
-   - `snipurl-redis` (Redis)
-   - `snipurl-frontend` (Frontend)
+2. **Backend Setup:**
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   
+   # Install dependencies
+   pip install -r requirements.txt
+   
+   # Create .env file
+   cp .env.example .env
+   # Edit .env with your settings
+   
+   # Run backend
+   uvicorn app.main:app --reload --port 10000
+   ```
 
-### Option B: Manual Setup
-1. **Create Backend Service:**
-   - Web Service → Python → FastAPI
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - Add environment variables (see below)
+3. **Frontend Setup:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-2. **Create Database:**
-   - PostgreSQL → Free tier
-   - Note the connection string
+4. **Access the Application:**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:10000
+   - API Docs: http://localhost:10000/docs
 
-3. **Create Redis:**
-   - Redis → Free tier
+### Features
 
-4. **Create Frontend:**
-   - Static Site → Node.js → Build & Deploy
-   - Build Command: `cd frontend && npm install && npm run build`
-   - Publish Directory: `frontend/dist`
+- **URL Shortening**: Create short URLs with custom aliases
+- **Analytics**: Track clicks and visitor statistics
+- **Authentication**: JWT-based user authentication
+- **Rate Limiting**: Prevent abuse with configurable limits
+- **Caching**: Redis integration for fast redirects
+- **Modern UI**: Clean, responsive React interface
 
-## Step 3: Environment Variables
+### Project Structure
 
-### Backend Environment Variables
-```bash
-DATABASE_URL=postgresql://[connection-string]
-REDIS_URL=redis://[connection-string]
-SECRET_KEY=[generate-random-key]
-BASE_URL=https://your-backend-name.onrender.com
-CORS_ORIGINS=["https://your-frontend-name.onrender.com"]
+```
+snipurl/
+├── app/                    # Backend application
+│   ├── core/              # Core configuration
+│   ├── models/            # Database models
+│   ├── routers/           # API endpoints
+│   └── main.py           # FastAPI application
+├── frontend/              # React frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   └── api.js        # API configuration
+│   └── package.json
+├── Dockerfile            # Docker configuration
+├── requirements.txt      # Python dependencies
+└── README.md            # Project documentation
 ```
 
-### Frontend Environment Variables
+### API Endpoints
+
+- `POST /urls` - Create short URL
+- `GET /urls/me` - Get user's URLs
+- `GET /urls/{short_code}/stats` - Get URL statistics
+- `PATCH /urls/{short_code}` - Update URL status
+- `DELETE /urls/{short_code}` - Delete URL
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+
+### Environment Variables
+
 ```bash
-VITE_API_BASE_URL=https://your-backend-name.onrender.com
+# Database
+DATABASE_URL=sqlite:///./snipurl.db
+
+# Redis (optional)
+REDIS_URL=redis://localhost:6379
+
+# Security
+SECRET_KEY=your-secret-key-here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Application
+BASE_URL=http://localhost:10000
+SHORT_CODE_LENGTH=7
+
+# CORS
+CORS_ORIGINS=["http://localhost:3000"]
+
+# Rate Limiting
+RATE_LIMIT_DEFAULT=60/minute
+RATE_LIMIT_CREATE=20/minute
+RATE_LIMIT_REDIRECT=200/minute
 ```
 
-## Step 4: Update URLs
+### Testing
 
-After deployment, you need to update the URLs in your configuration:
+```bash
+# Backend tests
+pytest
 
-1. **Get your actual Render URLs:**
-   - Backend: `https://your-backend-name.onrender.com`
-   - Frontend: `https://your-frontend-name.onrender.com`
+# Frontend tests
+cd frontend
+npm test
+```
 
-2. **Update CORS origins** in backend environment variables:
-   ```bash
-   CORS_ORIGINS=["https://your-frontend-name.onrender.com"]
-   ```
+### Docker Development
 
-3. **Update frontend API URL** in frontend environment variables:
-   ```bash
-   VITE_API_BASE_URL=https://your-backend-name.onrender.com
-   ```
+```bash
+# Build and run with Docker
+docker-compose up --build
 
-## Step 5: Test the Deployment
+# Access application
+# Frontend: http://localhost:3000
+# Backend: http://localhost:10000
+```
 
-1. **Backend Health Check:**
-   ```bash
-   curl https://your-backend-name.onrender.com/health
-   ```
+## Production Deployment
 
-2. **Frontend Access:**
-   - Open `https://your-frontend-name.onrender.com`
-   - Try creating a short URL
+### Render Deployment
+
+1. **Push to GitHub** and connect to Render
+2. **Create Services:**
+   - Backend: Web Service (Python/FastAPI)
+   - Database: PostgreSQL
+   - Frontend: Static Site
+3. **Configure Environment Variables**
+4. **Deploy**
+
+### Key Considerations
+
+- Use PostgreSQL for production database
+- Configure Redis for caching
+- Set strong SECRET_KEY
+- Enable HTTPS (automatic on Render)
+- Monitor rate limits and usage
 
 ## Troubleshooting
 
-### Issue: "Failed to create short URL"
-**Causes:**
-1. Wrong API URL in frontend
-2. CORS not configured properly
-3. Backend not running
+### Common Issues
 
-**Solutions:**
-1. Check browser console for CORS errors
-2. Verify `VITE_API_BASE_URL` is correct
-3. Check backend logs on Render dashboard
+1. **Port Conflicts**: Ensure ports 10000 (backend) and 3000 (frontend) are available
+2. **Database Connection**: Check DATABASE_URL in .env file
+3. **CORS Errors**: Verify CORS_ORIGINS includes frontend URL
+4. **Redis Connection**: Optional - app works without Redis
 
-### Issue: CORS Errors
-**Solution:**
-Update `CORS_ORIGINS` in backend to include your frontend URL:
-```bash
-CORS_ORIGINS=["https://your-frontend-name.onrender.com"]
-```
+### Development Tips
 
-### Issue: Database Connection Errors
-**Solution:**
-1. Ensure database is created and running
-2. Check `DATABASE_URL` is correct
-3. Run migrations manually if needed
+- Use `uvicorn --reload` for auto-reloading during development
+- Check `/docs` for interactive API documentation
+- Monitor logs for debugging
+- Use browser dev tools to inspect API calls
 
-### Issue: Rust Compilation Error (pydantic-core)
-**Error:** `error: failed to create directory '/usr/local/cargo/registry/cache'`
+## Contributing
 
-**Causes:**
-- pydantic-core requires Rust to compile
-- Render's build environment has filesystem restrictions
+1. Fork the repository
+2. Create feature branch
+3. Make changes and test
+4. Submit pull request
 
-**Solutions:**
-1. **Use Docker Deployment (Recommended):**
-   - The `render.yaml` now uses Docker with `Dockerfile.render`
-   - Uses Python 3.11 and compatible package versions
-   - Avoids Rust compilation entirely
+## License
 
-2. **Use Compatible Package Versions:**
-   - `requirements-render.txt` has pre-compiled versions
-   - Uses older but stable package versions
-   - Avoids packages that need Rust compilation
-
-3. **Manual Deployment Steps:**
-   ```bash
-   # In Render dashboard, set these environment variables:
-   PYTHON_VERSION=3.11.7
-   PIP_VERSION=latest
-   ```
-
-### Issue: Out of Memory (Free Tier)
-**Error:** `Out of memory (used over 512Mi)`
-
-**Causes:**
-- Render free tier has 512MB memory limit
-- Multi-stage Docker builds use more memory
-- Multiple worker processes consume too much memory
-
-**Solutions:**
-1. **Use Lightweight Dockerfile:**
-   - `Dockerfile.lightweight` is optimized for memory
-   - Single-stage build instead of multi-stage
-   - Minimal dependencies only
-
-2. **Use Minimal Requirements:**
-   - `requirements-minimal.txt` has essential packages only
-   - Removes testing and development dependencies
-   - Uses memory-efficient package versions
-
-3. **Optimize Startup:**
-   - Single worker process: `--workers 1`
-   - Set `WEB_CONCURRENCY=1` environment variable
-   - Use `start.sh` script for memory management
-
-4. **Alternative: Upgrade Plan:**
-   - Render Standard plan ($7/month) provides 1GB RAM
-   - Better for production applications
-   - More reliable performance
-
-### Issue: Build Timeout
-**Solution:**
-1. Use Docker deployment (more reliable)
-2. Reduce package count in requirements
-3. Use Render's build caching
-
-## Production Considerations
-
-1. **Security:**
-   - Use a strong `SECRET_KEY`
-   - Enable HTTPS (Render does this automatically)
-   - Consider rate limiting
-
-2. **Performance:**
-   - Monitor Redis usage
-   - Consider upgrading database for high traffic
-
-3. **Scaling:**
-   - Backend can be scaled horizontally
-   - Frontend is static (CDN-friendly)
-
-## Example URLs for Testing
-
-Try these URLs to test your deployed application:
-
-- **Frontend:** `https://your-frontend-name.onrender.com`
-- **Backend API:** `https://your-backend-name.onrender.com/docs`
-- **Health Check:** `https://your-backend-name.onrender.com/health`
-
-## Support
-
-If you encounter issues:
-1. Check Render service logs
-2. Verify environment variables
-3. Test API endpoints directly
-4. Check browser console for JavaScript errors
+This project is for educational and portfolio purposes.

@@ -1,16 +1,29 @@
+# SnipURL Backend Dependencies
+# Core Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
+
+# Database
 sqlalchemy==2.0.23
 psycopg[binary]==3.1.18
-redis==5.0.1
-slowapi==0.1.9
+alembic==1.13.1
+
+# Data Validation & Settings
 pydantic==2.5.0
 pydantic-settings==2.1.0
-pydantic[email]==2.5.0
+
+# Authentication
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-alembic==1.13.1
 python-multipart==0.0.6
+
+# Caching & Rate Limiting
+redis==5.0.1
+slowapi==0.1.9
+
+# HTTP Client
+httpx==0.25.2
+
+# Testing (optional for development)
 pytest==7.4.3
 pytest-asyncio==0.21.1
-httpx==0.25.2
