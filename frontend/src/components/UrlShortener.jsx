@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Scissors, Copy, ExternalLink, Calendar, Shield } from 'lucide-react';
+import { urlAPI } from '../api';
 
 /**
  * URL Shortener Component
@@ -53,21 +54,10 @@ const UrlShortener = () => {
       };
 
       // Make API request to create short URL
-      const apiResponse = await fetch('http://localhost:8000/urls', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(urlCreationPayload)
-      });
-      
-      // Handle API errors
-      if (!apiResponse.ok) {
-        throw new Error('Failed to create short URL');
-      }
+      const apiResponse = await urlAPI.createUrl(urlCreationPayload);
       
       // Process successful response
-      const responseData = await apiResponse.json();
+      const responseData = apiResponse.data;
       setCreatedUrlResult(responseData);
       
       // Reset form after successful creation

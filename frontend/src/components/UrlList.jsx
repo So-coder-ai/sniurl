@@ -11,6 +11,7 @@ import {
   ToggleRight,
   RefreshCw
 } from 'lucide-react';
+import { urlAPI } from '../api';
 
 /**
  * URL List Component
@@ -37,9 +38,8 @@ const UrlList = () => {
   const loadUserUrls = async () => {
     try {
       setIsLoadingUrls(true);
-      const apiResponse = await fetch('http://localhost:8000/urls');
-      const responseData = await apiResponse.json();
-      setUserUrls(responseData.urls || []);
+      const apiResponse = await urlAPI.getMyUrls();
+      setUserUrls(apiResponse.data.urls || []);
       setFetchError('');
     } catch (error) {
       setFetchError('Failed to fetch URLs');
@@ -74,26 +74,15 @@ const UrlList = () => {
     setPendingActions(prev => ({ ...prev, [shortCode]: true }));
     
     try {
-      const apiResponse = await fetch(`http://localhost:8000/urls/${shortCode}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_active: !currentStatus })
-      });
-      
-      if (apiResponse.ok) {
-        // Update local state to reflect the change
-        setUserUrls(prevUrls => 
-          prevUrls.map(url => 
-            url.short_code === shortCode 
-              ? { ...url, is_active: !currentStatus }
-              : url
-          )
-        );
-      } else {
-        throw new Error('Failed to update URL status');
-      }
+      const apiResponse = await urlAPI.updateUrl(shortCode, { is_active: !currentStatus });
+      // Update local state to reflect the change
+      setUserUrls(prevUrls => 
+        prevUrls.map(url => 
+          url.short_code === shortCode 
+            ? { ...url, is_active: !currentStatus }
+            : url
+        )
+      );
     } catch (error) {
       console.error('Toggle status error:', error);
       setFetchError('Failed to update URL status');
@@ -114,16 +103,9 @@ const UrlList = () => {
     setPendingActions(prev => ({ ...prev, [shortCode]: true }));
     
     try {
-      const apiResponse = await fetch(`http://localhost:8000/urls/${shortCode}`, {
-        method: 'DELETE'
-      });
-      
-      if (apiResponse.ok) {
-        // Remove URL from local state
-        setUserUrls(prevUrls => prevUrls.filter(url => url.short_code !== shortCode));
-      } else {
-        throw new Error('Failed to delete URL');
-      }
+      await urlAPI.deleteUrl(shortCode);
+      // Remove URL from local state
+      setUserUrls(prevUrls => prevUrls.filter(url => url.short_code !== shortCode));
     } catch (error) {
       console.error('Delete error:', error);
       setFetchError('Failed to delete URL');

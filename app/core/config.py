@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
 
-    base_url: str = "http://localhost:8000"
+    base_url: str = "http://localhost:10000"
     short_code_length: int = 7
 
     rate_limit_default: str = "60/minute"

@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Users
 } from 'lucide-react';
+import { urlAPI } from '../api';
 
 /**
  * URL Statistics Component
@@ -44,14 +45,8 @@ const UrlStats = () => {
       setIsLoadingStats(true);
       setErrorMessage('');
       
-      const apiResponse = await fetch(`http://localhost:8000/urls/${shortCode}/stats`);
-      
-      if (!apiResponse.ok) {
-        throw new Error('Failed to fetch URL statistics');
-      }
-      
-      const statisticsData = await apiResponse.json();
-      setUrlStatistics(statisticsData);
+      const apiResponse = await urlAPI.getUrlStats(shortCode);
+      setUrlStatistics(apiResponse.data);
     } catch (error) {
       setErrorMessage('Failed to fetch URL statistics');
       console.error('Statistics fetch error:', error);
@@ -194,19 +189,19 @@ const UrlStats = () => {
             <div className="flex items-center space-x-2">
               <input
                 type="text"
-                value={urlStatistics?.short_url || `http://localhost:8000/${shortCode}`}
+                value={urlStatistics?.short_url || `http://localhost:10000/${shortCode}`}
                 readOnly
                 className="input text-sm"
               />
               <button
-                onClick={() => copyUrlToClipboard(urlStatistics?.short_url || `http://localhost:8000/${shortCode}`)}
+                onClick={() => copyUrlToClipboard(urlStatistics?.short_url || `http://localhost:10000/${shortCode}`)}
                 className="copy-btn"
                 title="Copy URL"
               >
                 {isUrlCopied ? '✓' : <Copy className="h-4 w-4" />}
               </button>
               <a
-                href={urlStatistics?.short_url || `http://localhost:8000/${shortCode}`}
+                href={urlStatistics?.short_url || `http://localhost:10000/${shortCode}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="copy-btn"
